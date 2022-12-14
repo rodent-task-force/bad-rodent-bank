@@ -27,14 +27,54 @@ contract OUSDFuzzTest is PTest {
             );
     }
 
+    function invariantNonRebasingLessThanTotalSupply() public {
+        assertLe(
+            ousd.nonRebasingSupply(),
+            ousd.totalSupply()
+            );
+    }
+
+    function invariantCanBurnBalance() public {
+        uint256 aliceBalance = ousd.balanceOf(alice);
+        if(aliceBalance > 0){
+            vm.prank(vault);
+            ousd.burn(alice, aliceBalance);    
+        }
+    }
+
     function testMint() public {
         vm.prank(vault);
-    	ousd.mint(alice, 100e18);
+        ousd.mint(alice, 100e18);
         
         vm.prank(vault);
         ousd.changeSupply(250e18);
 
         vm.prank(vault);
         ousd.mint(alice, 1);
+        assertEq(ousd.balanceOf(alice), ousd.totalSupply());
+        assertEq(ousd.balanceOf(alice), 250e18+1);
+    }
+
+    function testNonRebasing() public {
+        vm.prank(vault);
+        ousd.mint(alice, 100e18);
+        
+        vm.prank(vault);
+        ousd.changeSupply(250e18);
+
+        vm.prank(alice);
+        ousd.rebaseOptOut();
+
+        vm.prank(vault);
+        ousd.burn(alice, 1);
+
+        uint256 aliceBalance = ousd.balanceOf(alice);
+
+        vm.prank(vault);
+        ousd.burn(alice, aliceBalance);
+
+        assertEq(ousd.totalSupply(), 0);
+        assertEq(ousd.balanceOf(alice), 0);
+        assertEq(ousd.nonRebasingSupply(), 0);
     }
 }
