@@ -14,10 +14,10 @@ contract OUSDFuzzTest is PTest {
         ousd.initialize("OUSD", "OUSD", address(vault));
 
         vm.deal(depositor, 100);
-        vm.prank(depositor);
+        // vm.prank(depositor);
 
         vm.deal(vault, 100);
-        vm.prank(vault);
+        // vm.prank(vault);
     }
 
     function invariantBalanceLessThanTotalSupply() public {
