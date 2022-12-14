@@ -7,7 +7,7 @@ import "./OUSD/contracts/token/OUSD.sol";
 contract OUSDFuzzable is OUSD {
 
 
-	function mint(uint256 _amount) external {
+	function mint(uint128 _amount) external {
         _mint(msg.sender, _amount);
     }
 
@@ -15,9 +15,8 @@ contract OUSDFuzzable is OUSD {
         _burn(msg.sender, amount);
     }
 
-    function increaseSupply(uint256 amount) external {
-    	require(amount < 1e18);
-
+    function increaseSupply(uint128 amount) external {
+    	amount = amount % 1e27;
 	    _changeSupply(_totalSupply + amount);
     }
 }
