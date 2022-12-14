@@ -1,8 +1,8 @@
 import "../../lib/pnm-contracts/PTest.sol";
-import "../../src/OUSD/contracts/token/OUSD.sol";
+import "../../src/OUSDFuzzable.sol";
 
 contract OUSDFuzzTest is PTest {
-    OUSD ousd;
+    OUSDFuzzable ousd;
     address agent;
     address alice = address(0x0100);
     address bob = address(0x0101);
@@ -11,7 +11,7 @@ contract OUSDFuzzTest is PTest {
     function setUp() external {
         agent = getAgent();
 
-        ousd = new OUSD();
+        ousd = new OUSDFuzzable();
         ousd.initialize("OUSD", "OUSD", address(vault));
 
         vm.deal(payable(alice), 1e18);
@@ -55,26 +55,15 @@ contract OUSDFuzzTest is PTest {
         assertEq(ousd.balanceOf(alice), 250e18+1);
     }
 
-    function testNonRebasing() public {
-        vm.prank(vault);
-        ousd.mint(alice, 100e18);
-        
-        vm.prank(vault);
-        ousd.changeSupply(250e18);
+    function testNonRebasingFailToBurn() public {
+        vm.startPrank(alice);
 
-        vm.prank(alice);
+        ousd.mint(100e18);
+        ousd.increaseSupply(150e18);
         ousd.rebaseOptOut();
-
-        vm.prank(vault);
-        ousd.burn(alice, 1);
+        ousd.burn(1);
 
         uint256 aliceBalance = ousd.balanceOf(alice);
-
-        vm.prank(vault);
-        ousd.burn(alice, aliceBalance);
-
-        assertEq(ousd.totalSupply(), 0);
-        assertEq(ousd.balanceOf(alice), 0);
-        assertEq(ousd.nonRebasingSupply(), 0);
+        ousd.burn(aliceBalance); // Reverts
     }
 }

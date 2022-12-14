@@ -544,6 +544,12 @@ contract OUSD is Initializable, InitializableERC20Detailed, Governable {
         onlyVault
         nonReentrant
     {
+        _changeSupply(_newTotalSupply);
+    }
+
+    function _changeSupply(uint256 _newTotalSupply)
+        internal
+    {
         require(_totalSupply > 0, "Cannot increase 0 supply");
 
         if (_totalSupply == _newTotalSupply) {
