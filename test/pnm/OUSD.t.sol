@@ -1,0 +1,35 @@
+import "../../lib/pnm-contracts/PTest.sol";
+import "../../src/Bank.sol";
+
+contract OUSDFuzzTest is PTest {
+    Bank bank;
+    address agent;
+    address payable depositor;
+    address payable vault;
+
+    function setUp() external {
+        agent = getAgent();
+        vault = getAgent();
+
+        bank = new OUSD();
+        ousd.initialize("OUSD", "OUSD", address(vault));
+
+        vm.deal(depositor, 100);
+        vm.prank(depositor);
+
+        vm.deal(vault, 100);
+        vm.prank(vault);
+    }
+
+    function invariantBalanceLessThanTotalSupply() public {
+        assertLe(
+            ousd.balanceOf(address(depositor)),
+            ousd.totalSupply
+            );
+    }
+
+    function attack() public {
+	// vm.prank(agent);
+	// bank.withdrawFrom(agent, 2);
+    }
+}
