@@ -13,11 +13,24 @@ contract OUSDFuzzTest is PTest {
 
         ousd = new OUSDFuzzable();
         ousd.initialize("OUSD", "OUSD", address(vault));
+    }
 
-        vm.deal(payable(alice), 1e18);
-        vm.deal(payable(bob), 1e18);
-        vm.deal(payable(vault), 1e18);
-        
+    function invariantCanBurnBalance() public {
+        uint256 agentBalance = ousd.balanceOf(agent);
+        if(agentBalance > 0){
+            ousd.burn(agentBalance);    
+        }
+    }
+
+    function testNonRebasingFailToBurn() public {
+        vm.startPrank(alice);
+
+        ousd.mint(100e18);
+        ousd.increaseSupply(150e18); // greater than the mint before
+        ousd.rebaseOptOut();
+        ousd.burn(1);
+
+        ousd.burn(ousd.balanceOf(alice)); // Reverts
     }
 
     function invariantBalanceLessThanTotalSupply() public {
@@ -34,12 +47,7 @@ contract OUSDFuzzTest is PTest {
             );
     }
 
-    function invariantCanBurnBalance() public {
-        uint256 aliceBalance = ousd.balanceOf(alice);
-        if(aliceBalance > 0){
-            ousd.burn(aliceBalance);    
-        }
-    }
+    
 
     function testMint() public {
         vm.prank(vault);
@@ -54,14 +62,5 @@ contract OUSDFuzzTest is PTest {
         assertEq(ousd.balanceOf(alice), 250e18+1);
     }
 
-    function testNonRebasingFailToBurn() public {
-        vm.startPrank(alice);
-
-        ousd.mint(100e18);
-        ousd.increaseSupply(150e18);
-        ousd.rebaseOptOut();
-        ousd.burn(1);
-
-        ousd.burn(ousd.balanceOf(alice)); // Reverts
-    }
+    
 }
