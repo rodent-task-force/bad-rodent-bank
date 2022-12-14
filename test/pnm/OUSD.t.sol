@@ -1,5 +1,5 @@
 import "../../lib/pnm-contracts/PTest.sol";
-import "../../src/Bank.sol";
+import "../../src/OUSD/contracts/token/OUSD.sol";
 
 contract OUSDFuzzTest is PTest {
     OUSD ousd;
