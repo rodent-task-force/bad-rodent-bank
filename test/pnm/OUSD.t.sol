@@ -9,7 +9,6 @@ contract OUSDFuzzTest is PTest {
 
     function setUp() external {
         agent = getAgent();
-        vault = getAgent();
 
         ousd = new OUSD();
         ousd.initialize("OUSD", "OUSD", address(vault));
@@ -24,7 +23,7 @@ contract OUSDFuzzTest is PTest {
     function invariantBalanceLessThanTotalSupply() public {
         assertLe(
             ousd.balanceOf(address(depositor)),
-            ousd.totalSupply
+            ousd.totalSupply()
             );
     }
 
