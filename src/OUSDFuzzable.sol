@@ -16,7 +16,7 @@ contract OUSDFuzzable is OUSD {
     }
 
     function increaseSupply(uint256 amount) external {
-    	require(amount < 1e23);
+    	require(amount < 1e18);
 
 	    _changeSupply(_totalSupply + amount);
     }

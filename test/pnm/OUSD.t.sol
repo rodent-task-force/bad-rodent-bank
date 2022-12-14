@@ -37,8 +37,7 @@ contract OUSDFuzzTest is PTest {
     function invariantCanBurnBalance() public {
         uint256 aliceBalance = ousd.balanceOf(alice);
         if(aliceBalance > 0){
-            vm.prank(vault);
-            ousd.burn(alice, aliceBalance);    
+            ousd.burn(aliceBalance);    
         }
     }
 
@@ -63,7 +62,6 @@ contract OUSDFuzzTest is PTest {
         ousd.rebaseOptOut();
         ousd.burn(1);
 
-        uint256 aliceBalance = ousd.balanceOf(alice);
-        ousd.burn(aliceBalance); // Reverts
+        ousd.burn(ousd.balanceOf(alice)); // Reverts
     }
 }
