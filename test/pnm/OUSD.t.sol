@@ -2,7 +2,7 @@ import "../../lib/pnm-contracts/PTest.sol";
 import "../../src/Bank.sol";
 
 contract OUSDFuzzTest is PTest {
-    Bank bank;
+    OUSD ousd;
     address agent;
     address payable depositor;
     address payable vault;
@@ -11,7 +11,7 @@ contract OUSDFuzzTest is PTest {
         agent = getAgent();
         vault = getAgent();
 
-        bank = new OUSD();
+        ousd = new OUSD();
         ousd.initialize("OUSD", "OUSD", address(vault));
 
         vm.deal(depositor, 100);
