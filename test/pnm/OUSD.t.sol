@@ -16,10 +16,12 @@ contract OUSDFuzzTest is PTest {
     }
 
     function invariantCanBurnBalance() public {
+        vm.startPrank(agent);
         uint256 agentBalance = ousd.balanceOf(agent);
-        if(agentBalance > 0){
-            ousd.burn(agentBalance);    
+        if (agentBalance > 0) {
+            ousd.burn(agentBalance);
         }
+        vm.stopPrank();
     }
 
     function testNonRebasingFailToBurn() public {
@@ -34,33 +36,23 @@ contract OUSDFuzzTest is PTest {
     }
 
     function invariantBalanceLessThanTotalSupply() public {
-        assertLe(
-            ousd.balanceOf(address(alice)),
-            ousd.totalSupply()
-            );
+        assertLe(ousd.balanceOf(address(alice)), ousd.totalSupply());
     }
 
     function invariantNonRebasingLessThanTotalSupply() public {
-        assertLe(
-            ousd.nonRebasingSupply(),
-            ousd.totalSupply()
-            );
+        assertLe(ousd.nonRebasingSupply(), ousd.totalSupply());
     }
-
-    
 
     function testMint() public {
         vm.prank(vault);
         ousd.mint(alice, 100e18);
-        
+
         vm.prank(vault);
         ousd.changeSupply(250e18);
 
         vm.prank(vault);
         ousd.mint(alice, 1);
         assertEq(ousd.balanceOf(alice), ousd.totalSupply());
-        assertEq(ousd.balanceOf(alice), 250e18+1);
+        assertEq(ousd.balanceOf(alice), 250e18 + 1);
     }
-
-    
 }
