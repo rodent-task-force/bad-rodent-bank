@@ -24,12 +24,11 @@ contract OUSDFuzzTest is PTest {
 
 
     function invariantCanBurnBalance() public {
-        vm.startPrank(agent);
         uint256 agentBalance = ousd.balanceOf(agent);
         if (agentBalance > 0) {
+            vm.prank(agent);
             ousd.burn(agentBalance);
         }
-        vm.stopPrank();
     }
 
     // Legit bug
@@ -47,9 +46,10 @@ contract OUSDFuzzTest is PTest {
     // }
 
     function testStrangeMintBug() public {
-        vm.startPrank(agent);
+        vm.prank(agent);
         ousd.mint(128);
         assertEq(ousd.balanceOf(agent), 128);
+        vm.prank(agent);
         ousd.burn(128);
     }
 
