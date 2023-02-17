@@ -17,12 +17,14 @@ contract OUSDFuzzTest is PTest {
 
    function invariantRebaseOptInKeepsBalance() public {
      uint256 prevBalance = ousd.balanceOf(agent);
+     vm.prank(agent);
      ousd.rebaseOptIn();
      assertEq(ousd.balanceOf(agent), prevBalance);
    }
 
    function invariantRebaseOptOutKeepsBalance() public {
      uint256 prevBalance = ousd.balanceOf(agent);
+     vm.prank(agent);
      ousd.rebaseOptOut();
      assertEq(ousd.balanceOf(agent), prevBalance);
    }
